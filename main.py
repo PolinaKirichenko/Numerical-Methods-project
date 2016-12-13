@@ -130,6 +130,8 @@ class ExampleApp(QtGui.QMainWindow, new_design.Ui_MainWindow):
         self.interpolate("plan_tab")
         self.interpolate("traffic_tab")
 
+        #self.diff_equation()
+
         self.solution_plot("cauchy_sol")
 
     def solution_plot(self, input_file):
@@ -139,13 +141,17 @@ class ExampleApp(QtGui.QMainWindow, new_design.Ui_MainWindow):
     def tabulate(self, fun, dest_file):
         print("Tabulate called")
         t = np.linspace(0, self.params["T"], self.grid_size)
-        np.savetxt(dest_file, (t, ne.evaluate(fun)))
+        np.savetxt(dest_file, (t, ne.evaluate(fun + " + 0 * t")))
 
     def tabulate_integral(self, input_file):
         print("Tabulate integral called")
-        tab_fun = np.genfromtxt(input_file, delimiter=',')
-        ### Integral calculated here ###
+        tab_fun = np.genfromtxt(input_file)
+        for i in range(tab_fun.shape[0]):
+            self.integrate(tab_fun[:, i:])
         np.savetxt("u_tab", np.zeros(self.grid_size))
+
+    def integrate(self, grid):
+        print("Integrate")
 
     def functionFBeta(self):
         print("Threshold tuner called")
